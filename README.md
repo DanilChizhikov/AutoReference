@@ -8,8 +8,8 @@ AutoReference is designed to solve and optimize the efficient access to Unity Co
 - [Getting Started](#Getting-Started)
     - [Install manually (using .unitypackage)](#Install-manually-(using-.unitypackage))
     - [Install via UPM (using Git URL)](#Install-via-UPM-(using-Git-URL))
-- [Project Structure](#Project-Structure)
-    - [Interfaces](#Interfaces)
+- [Problems Addressed](#Problems-Addressed)
+- [Using](#Using)
 - [License](#License)
 
 ## Getting Started
@@ -29,179 +29,91 @@ Prerequisites:
       ```
 UPM should now install the package.
 
-## Project Structure
+## Problems Addressed
 
-### Interfaces
-
-1. IBehaviourService
+- Frequent use of 'GetComponent' can significantly reduce performance.
 ```csharp
-public interface IBehaviourService
+private void Update()
 {
-    IBehaviourState CreateState(IBehaviourStateConfig config);
-    IBehaviourAction CreateAction(IBehaviourActionConfig config);
-    IBehaviourDecision CreateDecision(IBehaviourDecisionConfig config);
+    var rigidbody = GetComponent<Rigidbody>();
+    // Performing some operations with rigidbody...
 }
 ```
 
-2. IBehaviourGraph
+- Using 'GetComponent' in 'Awake' or 'Start' methods for one-time initialization of all component fields might lead to lengthy and confusing code.
+It's also easy to forget to initialize new fields.
 ```csharp
-public interface IBehaviourGraph
+private Animator animator;
+private Rigidbody rigidbody;
+private Collider collider;
+private AudioSource audioSource;
+// Many other fields...
+
+private void Awake()
 {
-    bool IsPlaying { get; }
-    
-    void Enter();
-    void Update();
-    void Exit();
+   animator = GetComponent<Animator>();
+   rigidbody = GetComponent<Rigidbody>();
+   collider = GetComponent<Collider>();
+   audioSource = GetComponent<AudioSource>();
+    // More GetComponent calls...
 }
 ```
 
+- Implementing lazy-loading with properties might lead to verbose and redundant code.
 ```csharp
-public interface IBehaviourGraphConfig
+private Animator _animator;
+private RigidBody _rigidbody;
+
+public Animator animator
 {
-    IBehaviourStateConfig EnterState { get; }
-    IReadOnlyList<IBehaviourStateConfig> States { get; }
+    get
+    {
+        if (_animator == null)
+        {
+            _animator = GetComponent<Animator>();
+        }
+        return _animator;
+    }
+}
+
+public RigidBody rigidbody
+{
+    get
+    {
+        if (_rigidbody == null)
+        {
+            _rigidbody = GetComponent<RigidBody>();
+        }
+        return _rigidbody;
+    }
 }
 ```
 
-3. IBehaviourState
+## Using
+- MonoBehaviour
 ```csharp
-public interface IBehaviourState
+using UnityEngine;
+using MbsCore.AutoReference;
+
+public class ExampleBehaviour : MonoBehaviour
 {
-    void Enter();
-    void Update();
-    bool TryGetNextState(out IBehaviourState nextState);
-    void Exit();
+    [SerializeField, MonoAutoReference(true)] private Rigidbody[] _rigidbodies;
+    [SerializeField, MonoAutoReference] private Rigidbody _rigidbodie;
+    [SerializeField, ScriptableAutoReference] private ExampleScriptableObject _scriptableObject;
 }
 ```
 
+- ScriptableObject
 ```csharp
-public interface IBehaviourStateConfig { }
-```
- - IBehaviourLogicState
-```csharp
-public interface IBehaviourLogicState
+public class ExampleScriptableObject : ScriptableObject
 {
-    IReadOnlyList<IBehaviourAction> Actions { get; }
-    IReadOnlyList<IBehaviourTransition> Transitions { get; }
+    [SerializeField, ScriptableAutoReference] private ExampleInfo[] _infos;
+    [SerializeField, ScriptableAutoReference] private ExampleInfo _defaultInfo;
 }
-```
 
-```csharp
-public interface IBehaviourLogicStateConfig
+public class ExampleInfo : ScriptableObject
 {
-    IReadOnlyList<IBehaviourActionConfig> Actions { get; }
-    IReadOnlyList<IBehaviourTransitionConfig> Transitions { get; }
-}
-```
-
-```csharp
-public interface IBehaviourAction
-{
-    void Enter();
-    void Processing();
-    void Exit();
-}
-```
-
-```csharp
-public interface IBehaviourActionConfig { }
-```
-
-```csharp
-public interface IBehaviourTransition
-{
-    IBehaviourPort TruePort { get; }
-    IBehaviourPort FalsePort { get; }
-    IReadOnlyList<IBehaviourDecision> Decisions { get; }
-}
-```
-
-```csharp
-public interface IBehaviourTransitionConfig
-{
-    IBehaviourPortConfig TruePort { get; }
-    IBehaviourPortConfig FalsePort { get; }
-    IReadOnlyList<IBehaviourDecisionConfig> Decisions { get; }
-}
-```
-
- - IBehaviourForkState
-```csharp
-public interface IBehaviourForkState
-{
-    IReadOnlyList<IBehaviourFork> Forks { get; }
-}
-```
-
-```csharp
-public interface IBehaviourForkStateConfig
-{
-    IReadOnlyList<IBehaviourForkConfig> ForkInfos { get; }
-}
-```
-
-```csharp
-public interface IBehaviourFork
-{
-    IBehaviourPort Port { get; }
-    int Weight { get; }
-    IReadOnlyList<IBehaviourDecision> Decisions { get; }
-}
-```
-
-```csharp
-public interface IBehaviourForkConfig
-{
-    IBehaviourPortConfig Port { get; }
-    int Weight { get; }
-    IReadOnlyList<IBehaviourDecisionConfig> Decisions { get; }
-}
-```
-
-4. IBehaviourPort
-```csharp
-public interface IBehaviourPort
-{
-    IBehaviourState NextState { get; }
-}
-```
-
-```csharp
-public interface IBehaviourPortConfig
-{
-    string Name { get; }
-    IBehaviourStateConfig NextState { get; }
-}
-```
-
-5. Factories
-```csharp
-public interface IBehaviourStateFactory : IServiceable
-{
-    IBehaviourState Create(IBehaviourStateConfig config);
-}
-```
-
-````csharp
-public interface IBehaviourActionFactory : IServiceable
-{
-    IBehaviourAction Create(IBehaviourActionConfig config);
-}
-````
-
-```csharp
-public interface IBehaviourDecisionFactory : IServiceable
-{
-    IBehaviourDecision Create(IBehaviourDecisionConfig config);
-}
-```
-
-6. IBehaviourGraphBuilder
-```csharp
-public interface IBehaviourGraphBuilder
-{
-    IBehaviourGraph Build();
-    void Reset();
+    [SerializeField] private string _id;
 }
 ```
 
