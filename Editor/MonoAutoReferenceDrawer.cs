@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace MbsCore.AutoReference.Editor
 {
-    [CustomPropertyDrawer(typeof(AutoReferenceAttribute))]
-    internal sealed class AutoReferenceDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(MonoAutoReferenceAttribute))]
+    internal sealed class MonoAutoReferenceDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var referenceAttribute = attribute as AutoReferenceAttribute;
             if (property.serializedObject.targetObject is MonoBehaviour target)
             {
+                var referenceAttribute = attribute as MonoAutoReferenceAttribute;
                 Type componentType = fieldInfo.FieldType.IsArray
                                              ? fieldInfo.FieldType.GetElementType()
                                              : fieldInfo.FieldType;
@@ -39,7 +39,7 @@ namespace MbsCore.AutoReference.Editor
                 else if (components.Count > 0)
                 {
                     property.objectReferenceValue = components[0];
-                }
+                }   
             }
             
             EditorGUI.PropertyField(position, property, label);

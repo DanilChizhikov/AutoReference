@@ -4,11 +4,11 @@ using UnityEngine;
 namespace MbsCore.AutoReference
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class AutoReferenceAttribute : PropertyAttribute
+    public sealed class MonoAutoReferenceAttribute : PropertyAttribute
     {
         public bool IncludeChild { get; }
         
-        public AutoReferenceAttribute(bool includeChild = false)
+        public MonoAutoReferenceAttribute(bool includeChild = false)
         {
             IncludeChild = includeChild;
         }
