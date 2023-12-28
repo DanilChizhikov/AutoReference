@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,34 +11,21 @@ namespace MbsCore.AutoReference.Editor
         {
             if (property.serializedObject.targetObject is MonoBehaviour target)
             {
-                var referenceAttribute = attribute as MonoAutoReferenceAttribute;
-                Type componentType = fieldInfo.FieldType.IsArray
+                Type referenceType = fieldInfo.FieldType.IsArray
                                              ? fieldInfo.FieldType.GetElementType()
                                              : fieldInfo.FieldType;
-                var components = new List<Component>(referenceAttribute.IncludeChild
-                                                             ? target.GetComponentsInChildren(componentType)
-                                                             : target.GetComponents(componentType));
 
-                if (fieldInfo.FieldType.IsArray)
+                ReferenceInstaller installer = null;
+                if (typeof(Component).IsAssignableFrom(referenceType))
                 {
-                    char[] pathChars = property.propertyPath.ToCharArray();
-                    for (int i = 0; i < pathChars.Length; i++)
-                    {
-                        if (!int.TryParse(pathChars[i].ToString(), out int index))
-                        {
-                            continue;
-                        }
-                    
-                        if (components.Count > index)
-                        {
-                            property.objectReferenceValue = components[index];
-                        }
-                    }
+                    installer = new MonoReferenceInstaller(fieldInfo, target, attribute as MonoAutoReferenceAttribute);
                 }
-                else if (components.Count > 0)
+                else if(typeof(ScriptableObject).IsAssignableFrom(referenceType))
                 {
-                    property.objectReferenceValue = components[0];
-                }   
+                    installer = new ScriptableReferenceInstaller(fieldInfo);
+                }
+                
+                installer?.Install(property, referenceType);
             }
             
             EditorGUI.PropertyField(position, property, label);
