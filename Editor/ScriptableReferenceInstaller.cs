@@ -47,7 +47,15 @@ namespace MbsCore.AutoReference.Editor
             }
             else if (scriptableObjects.Count > 0)
             {
-                property.objectReferenceValue = scriptableObjects[0];
+                TryInstall(property, scriptableObjects[0]);
+            }
+        }
+
+        private void TryInstall(SerializedProperty property, ScriptableObject scriptableObject)
+        {
+            if (property.objectReferenceValue == null)
+            {
+                property.objectReferenceValue = scriptableObject;
             }
         }
     }

@@ -41,8 +41,16 @@ namespace MbsCore.AutoReference.Editor
             }
             else if (components.Count > 0)
             {
-                property.objectReferenceValue = components[0];
+                TryInstall(property, components[0]);
             }  
+        }
+
+        private void TryInstall(SerializedProperty property, Component component)
+        {
+            if (property.objectReferenceValue == null)
+            {
+                property.objectReferenceValue = component;
+            }
         }
     }
 }
