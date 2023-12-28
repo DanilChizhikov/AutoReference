@@ -1,0 +1,30 @@
+{
+    "name": "com.danilchizhikov.autoreference",
+    "displayName": "AutoReference",
+    "version": "0.0.1",
+    "unity": "2022.3",
+    "description": "AutoReference is designed to solve and optimize the efficient access to Unity Components.",
+    "keywords": [
+        "unity",
+        "component",
+        "cache",
+        "attribute",
+        "reference",
+        "auto",
+        "auto reference",
+        "autoreference",
+        "Auto reference",
+        "Auto Reference"
+    ],
+    "category": "Tools",
+    "author": "MbsCore",
+    "repository": {
+        "type": "git",
+        "url": "ssh://github.com:DanilChizhikov/AutoReference.git",
+        "directory": "com.danilchizhikov.autoreference"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/@DanilChizhikov"
+    },
+    "license": "MIT"
+}
