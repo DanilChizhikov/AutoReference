@@ -18,14 +18,14 @@ Prerequisites:
 - [Unity](https://unity.com/releases/editor/archive) 2022.3+
 
 ### Install manually (using .unitypackage)
-1. Download the .unitypackage from [releases](https://github.com/DanilChizhikov/AddressableManagement/releases/) page.
+1. Download the .unitypackage from [releases](https://github.com/DanilChizhikov/AutoReference/releases/) page.
 2. Open AutoReference.x.x.x.unitypackage
 
 ### Install via UPM (using Git URL)
 1. Navigate to your project's Packages folder and open the manifest.json file.
 2. Add this line below the "dependencies": { line
     - ```json title="Packages/manifest.json"
-      "com.danilchizhikov.autoreference": "https://github.com/DanilChizhikov/AutoReference.git,
+      "com.danilchizhikov.autoreference": "https://github.com/DanilChizhikov/AutoReference.git",
       ```
 UPM should now install the package.
 
