@@ -6,22 +6,16 @@ using UnityEngine;
 
 namespace MbsCore.AutoReference.Editor
 {
-    internal sealed class MonoReferenceInstaller : ReferenceInstaller
+    internal sealed class MonoReferenceInstaller : ReferenceInstaller<MonoBehaviour, ComponentAutoReferenceAttribute>
     {
-        private readonly MonoBehaviour _target;
-        private readonly MonoAutoReferenceAttribute _attribute;
-        
-        public MonoReferenceInstaller(FieldInfo fieldInfo, MonoBehaviour target, MonoAutoReferenceAttribute attribute) : base(fieldInfo)
-        {
-            _target = target;
-            _attribute = attribute;
-        }
+        public MonoReferenceInstaller(FieldInfo fieldInfo, MonoBehaviour target, ComponentAutoReferenceAttribute attribute) :
+                base(fieldInfo, target, attribute) { }
 
         public override void Install(SerializedProperty property, Type referenceType)
         {
-            var components = new List<Component>(_attribute.IncludeChild
-                                                         ? _target.GetComponentsInChildren(referenceType)
-                                                         : _target.GetComponents(referenceType));
+            var components = new List<Component>(Attribute.SearchInChild
+                                                         ? Target.GetComponentsInChildren(referenceType)
+                                                         : Target.GetComponents(referenceType));
 
             if (FieldInfo.FieldType.IsArray)
             {

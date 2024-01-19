@@ -1,7 +1,7 @@
 {
     "name": "com.danilchizhikov.autoreference",
     "displayName": "AutoReference",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "unity": "2022.3",
     "description": "AutoReference is designed to solve and optimize the efficient access to Unity Components.",
     "keywords": [

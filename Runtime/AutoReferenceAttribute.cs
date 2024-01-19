@@ -4,5 +4,5 @@ using UnityEngine;
 namespace MbsCore.AutoReference
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ScriptableAutoReferenceAttribute : PropertyAttribute { }
+    public abstract class AutoReferenceAttribute : PropertyAttribute { }
 }

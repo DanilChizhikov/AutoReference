@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace MbsCore.AutoReference.Editor
 {
-    [CustomPropertyDrawer(typeof(MonoAutoReferenceAttribute))]
     internal sealed class MonoAutoReferenceDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
